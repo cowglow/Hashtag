@@ -41,9 +41,14 @@ if(!class_exists('HashtagPluginOption')) {
 			$regular   = easy_options('regular_search','hashtag-plugin-option');
 			$class     = easy_options('link_class','hashtag-plugin-option');
 			$hash      = $regular ? '' : '%23';
-			$class     = $class ? $class : 'hashtag';
+//			$class     = $class ? $class : 'hashtag'; // No longer used
 			$content = str_replace('>#','> #',$content);
-			$content = preg_replace('/(?<!:|\s|&|"|\')(\s)#([^\s<]+)/i', '<span class="'.$class.'">\1#<a href="'.site_url().'?s='.$hash.'\2">\2</a></span>', $content);
+//			$pattern = '/(?<!:|\s|&|"|\')(\s)#([^\s<]+)/i'; // Old Pattern
+			$pattern = '/(#\w+)/';
+			$content = html_entity_decode($content);
+			$content = preg_replace_callback($pattern, function($matches) {
+				return '<span><a href="'.site_url().'?s='.substr($matches[0],1).'">'.$matches[0].'</a></span>';
+			}, $content);
 			return $content;
 		}
 		
